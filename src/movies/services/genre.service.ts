@@ -7,6 +7,7 @@ export class GenreService {
   constructor(private prismaService: PrismaService) {}
 
   create(createMovieDto: CreateGenreDto) {
+    
     return 'This action adds a new movie';
   }
 
