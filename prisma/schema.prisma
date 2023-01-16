@@ -43,7 +43,7 @@ model Movie {
   title    String
   text     String
   overview String
-  generes  Genre[]
+  genres  Genre[]
   image    String?
   userId   Int
 

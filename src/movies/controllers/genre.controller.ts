@@ -7,27 +7,25 @@ import {
   Param,
   Delete,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { GetAuthUser } from 'src/helper/auth/user.decorator';
-import { AuthUser } from 'src/auth/entities/auth.entity';
 import { JwtGuard } from 'src/helper/auth/user.guard';
 import { GenreService } from '../services/genre.service';
 import { CreateGenreDto, UpdateGenreDto } from '../dto/genre/genre.dto';
 
-@Controller('movies/genre')
+@Controller()
 export class GenreController {
   constructor(private readonly genreService: GenreService) {}
 
+  @UseGuards(JwtGuard)
   @Post()
   create(@Body() createMovieDto: CreateGenreDto) {
     return this.genreService.create(createMovieDto);
   }
 
-  @UseGuards(JwtGuard)
   @Get()
-  findAll(@GetAuthUser() user: AuthUser) {
-    return user;
+  findAll() {
+    return this.genreService.findAll();
   }
 
   @Get(':id')
@@ -35,9 +33,15 @@ export class GenreController {
     return this.genreService.findOne(+id);
   }
 
+  @UseGuards(JwtGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMovieDto: UpdateGenreDto) {
-    return this.genreService.update(+id, updateMovieDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateMovieDto: UpdateGenreDto,
+  ) {
+    return this.genreService.update(+id, updateMovieDto).catch((e) => {
+      throw new NotFoundException({ error: 'Failed to update' });
+    });
   }
 
   @Delete(':id')

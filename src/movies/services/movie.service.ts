@@ -18,26 +18,15 @@ export class GenreService {
     return genres;
   }
 
-  async findOne(id: number) {
-    return await this.prismaService.genre.findUnique({
-      where: {
-        id: id,
-      },
-    });
+  findOne(id: number) {
+    return `This action returns a #${id} movie`;
   }
 
-  async update(id: number, updateMovieDto: UpdateGenreDto) {
-    return await this.prismaService.genre.update({
-      where: { id: id },
-      data: { ...updateMovieDto },
-    });
+  update(id: number, updateMovieDto: UpdateGenreDto) {
+    return `This action updates a #${id} movie`;
   }
 
-  async remove(id: number) {
-    return await this.prismaService.genre.delete({
-      where: {
-        id: id,
-      },
-    });
+  remove(id: number) {
+    return `This action removes a #${id} movie`;
   }
 }
