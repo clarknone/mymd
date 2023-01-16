@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateGenreDto {
   @IsNotEmpty()
@@ -9,6 +9,15 @@ export class CreateGenreDto {
   @IsNotEmpty()
   @IsString()
   description: string;
+}
+
+export class GenreRelationDto {
+  @IsNotEmpty()
+  @IsNumber()
+  id: number;
+
+  title?: string;
+  description?: string;
 }
 
 export class UpdateGenreDto extends PartialType(CreateGenreDto) {}
