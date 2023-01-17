@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { MoviesService } from '../movies.service';
 import { CreateMovieDto } from '../dto/movie/create-movie.dto';
@@ -31,8 +32,8 @@ export class MoviesController {
   }
 
   @Get()
-  findAll() {
-    return this.moviesService.findAll();
+  findAll(@Query() params) {
+    return this.moviesService.findAll(params);
   }
 
   @Get(':id')

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthUser } from 'src/auth/entities/auth.entity';
+import { IQueryParams } from 'src/helper/interfaces/movie.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateMovieDto } from './dto/movie/create-movie.dto';
 import { UpdateMovieDto } from './dto/movie/update-movie.dto';
@@ -19,10 +20,20 @@ export class MoviesService {
     });
   }
 
-  async findAll() {
-    return await this.prismaService.movie.findMany({
-      include: { genres: true },
-    });
+  async findAll(filter: IQueryParams) {
+    const { page = 1, limit = 10 } = filter;
+    const skip = (page - 1 || 0) * limit;
+    const result = await this.prismaService.$transaction([
+      this.prismaService.movie.count(),
+      this.prismaService.movie.findMany({
+        skip,
+        take: +limit,
+        include: { genres: true },
+      }),
+    ]);
+
+    const movies = result[1];
+    return { meta: { count: result[0] || 0 }, data: movies };
   }
 
   async findOne(id: number) {
