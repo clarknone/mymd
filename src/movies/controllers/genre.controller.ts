@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { JwtGuard } from 'src/helper/auth/user.guard';
 import { GenreService } from '../services/genre.service';
@@ -24,8 +25,9 @@ export class GenreController {
   }
 
   @Get()
-  findAll() {
-    return this.genreService.findAll();
+  findAll(@Query() params) {
+    const { page = 1, limit = 10 } = params;
+    return this.genreService.findAll({ page, limit });
   }
 
   @Get(':id')
