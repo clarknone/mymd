@@ -41,8 +41,12 @@ export class MoviesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.moviesService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const movie = await this.moviesService.findOne(+id);
+    if (!movie) {
+      throw new NotFoundException('Invalid ID, Movie not found');
+    }
+    return movie;
   }
 
   @UseGuards(JwtGuard)
@@ -52,10 +56,6 @@ export class MoviesController {
     @GetAuthUser() user: AuthUser,
     @Body() updateMovieDto: UpdateMovieDto,
   ) {
-    // return this.moviesService.update(+id, updateMovieDto, user).catch((e) => {
-    //   console.log({ e });
-    //   throw new NotFoundException('failed to update');
-    // });
     return this.moviesService.update(+id, updateMovieDto, user);
   }
 

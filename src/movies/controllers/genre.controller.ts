@@ -34,8 +34,12 @@ export class GenreController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.genreService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const genre = await this.genreService.findOne(+id);
+    if (!genre) {
+      throw new NotFoundException("Invalid ID, Genre not found");
+    }
+    return genre;
   }
 
   @UseGuards(JwtGuard)
