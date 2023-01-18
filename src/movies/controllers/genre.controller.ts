@@ -9,11 +9,14 @@ import {
   UseGuards,
   NotFoundException,
   Query,
+  UseFilters,
 } from '@nestjs/common';
 import { JwtGuard } from 'src/helper/auth/user.guard';
 import { GenreService } from '../services/genre.service';
 import { CreateGenreDto, UpdateGenreDto } from '../dto/genre/genre.dto';
+import { PrimsaErrorExceptionFitler } from 'src/helper/exceptions/filters/prisma.knownRequest';
 
+@UseFilters(PrimsaErrorExceptionFitler)
 @Controller()
 export class GenreController {
   constructor(private readonly genreService: GenreService) {}
@@ -41,9 +44,7 @@ export class GenreController {
     @Param('id') id: string,
     @Body() updateMovieDto: UpdateGenreDto,
   ) {
-    return this.genreService.update(+id, updateMovieDto).catch((e) => {
-      throw new NotFoundException({ error: 'Failed to update' });
-    });
+    return this.genreService.update(+id, updateMovieDto);
   }
 
   @Delete(':id')
