@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { QueryParamDTO } from 'src/helper/dto/queryparams.dto';
+import { QueryParamsEntity } from 'src/helper/entity/query..entity';
 import { IQueryParams } from 'src/helper/interfaces/movie.interface';
+import parseQueryParams from 'src/helper/services/filter';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateGenreDto, UpdateGenreDto } from '../dto/genre/genre.dto';
-
 
 @Injectable()
 export class GenreService {
@@ -15,12 +17,17 @@ export class GenreService {
     return genre;
   }
 
-  async findAll(filter: IQueryParams) {
-    const { page = 1, limit = 10 } = filter;
-    const skip = (page - 1 || 0) * limit;
+  async findAll(filter: QueryParamDTO) {
+    const queryFilter: QueryParamsEntity = parseQueryParams(filter);
+    console.log({queryFilter});
     const result = await this.prismaService.$transaction([
       this.prismaService.genre.count(),
-      this.prismaService.genre.findMany({ skip, take: +limit }),
+      this.prismaService.genre.findMany({
+        where: { ...(queryFilter.where || null) },
+        orderBy: { ...(queryFilter.orderBy || null) },
+        skip: queryFilter.skip,
+        take: queryFilter.take,
+      }),
     ]);
 
     const genres = result[1];
