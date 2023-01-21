@@ -19,12 +19,11 @@ export class GenreService {
 
   async findAll(filter: QueryParamDTO) {
     const queryFilter: QueryParamsEntity = parseQueryParams(filter);
-    console.log({queryFilter});
     const result = await this.prismaService.$transaction([
       this.prismaService.genre.count(),
       this.prismaService.genre.findMany({
-        where: { ...(queryFilter.where || null) },
-        orderBy: { ...(queryFilter.orderBy || null) },
+        // where: { ...(queryFilter.where || null) },
+        // orderBy: { ...(queryFilter.orderBy || null) },
         skip: queryFilter.skip,
         take: queryFilter.take,
       }),

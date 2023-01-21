@@ -6,11 +6,10 @@ export default function parseQueryParams(
   queryParamDto: QueryParamDTO,
 ): QueryParamsEntity {
   const queryParams: QueryParamsEntity = {};
-  const { page, limit, sort, ...filter } = queryParamDto;
-  queryParams.skip = page && page * queryParamDto.limit;
+  const { page = 1, limit, sort, ...filter } = queryParamDto;
+  queryParams.skip = page && (page - 1) * queryParamDto.limit;
   queryParams.take = queryParamDto.limit;
-  queryParams.orderBy = queryParamDto.sort;
+  // queryParams.orderBy = queryParamDto.sort;
   queryParams.where = { ...filter };
-  console.log({queryParamDto})
-  return normalizeNullFields({ queryParams }, { allowZero: true });
+  return normalizeNullFields(queryParams, { allowZero: true });
 }
