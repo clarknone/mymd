@@ -10,12 +10,16 @@ import {
   NotFoundException,
   Query,
   UseFilters,
+  createParamDecorator,
+  ExecutionContext,
+  ValidationPipe,
 } from '@nestjs/common';
 import { JwtGuard } from 'src/helper/auth/user.guard';
 import { GenreService } from '../services/genre.service';
 import { CreateGenreDto, UpdateGenreDto } from '../dto/genre/genre.dto';
 import { PrimsaErrorExceptionFitler } from 'src/helper/exceptions/filters/prisma.knownRequest';
 import { QueryParamDTO } from 'src/helper/dto/queryparams.dto';
+import { CustomQuery } from 'src/helper/decorator/query.decorator';
 
 @UseFilters(PrimsaErrorExceptionFitler)
 @Controller()
@@ -29,8 +33,7 @@ export class GenreController {
   }
 
   @Get()
-  findAll(@Query() params: QueryParamDTO) {
-    console.log({params})
+  findAll(@CustomQuery() params: QueryParamDTO) {
     return this.genreService.findAll(params);
   }
 
