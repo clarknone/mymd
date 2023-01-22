@@ -11,32 +11,45 @@ import {
   Query,
   Catch,
   UseFilters,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { MoviesService } from '../movies.service';
 import { CreateMovieDto } from '../dto/movie/create-movie.dto';
 import { UpdateMovieDto } from '../dto/movie/update-movie.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { GetAuthUser } from 'src/helper/auth/user.decorator';
 import { AuthUser } from 'src/auth/entities/auth.entity';
 import { JwtGuard } from 'src/helper/auth/user.guard';
 import { PrimsaErrorExceptionFitler } from 'src/helper/exceptions/filters/prisma.knownRequest';
+import { QueryParamDTO } from 'src/helper/dto/queryparams.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @UseFilters(PrimsaErrorExceptionFitler)
 @Controller()
 export class MoviesController {
-  constructor(private readonly moviesService: MoviesService) {}
+  constructor(
+    private readonly moviesService: MoviesService,
+    private cloudinaryService: CloudinaryService,
+  ) {}
 
   @UseGuards(JwtGuard)
+  @UseInterceptors(FileInterceptor('image'))
   @Post()
-  create(
+  async create(
+    @UploadedFile() file: Express.Multer.File,
     @Body() createMovieDto: CreateMovieDto,
     @GetAuthUser() user: AuthUser,
   ) {
+    if (file) {
+      const response = await this.cloudinaryService.uploadImage(file);
+      createMovieDto.image = response.secure_url || '';
+    }
     return this.moviesService.create(createMovieDto, user);
   }
 
   @Get()
-  findAll(@Query() params) {
+  findAll(@Query() params: QueryParamDTO) {
     return this.moviesService.findAll(params);
   }
 

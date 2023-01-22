@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthUser } from 'src/auth/entities/auth.entity';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { IQueryParams } from 'src/helper/interfaces/movie.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateMovieDto } from './dto/movie/create-movie.dto';
@@ -7,14 +8,16 @@ import { UpdateMovieDto } from './dto/movie/update-movie.dto';
 
 @Injectable()
 export class MoviesService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+  ) {}
 
-  create(createMovieDto: CreateMovieDto, user: AuthUser) {
+  create(createMovieDto: CreateMovieDto, user: AuthUser,) {
     const { genres, ...data } = createMovieDto;
     return this.prismaService.movie.create({
       data: {
         ...data,
-        genres: { connect: [...genres] },
+        // genres: { connect: [...genres] },
         user: { connect: { email: user.email } },
       },
     });
