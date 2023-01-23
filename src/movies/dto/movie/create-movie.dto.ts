@@ -28,11 +28,11 @@ export class CreateMovieDto {
   @IsString()
   overview: string;
 
-  @IsOptional()
+  // @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => GenreRelationDto)
-  // @IsNotEmpty()
+  @IsNotEmpty()
   genres?: GenreRelationDto[];
 
   user: IUser;
