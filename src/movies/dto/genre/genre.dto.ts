@@ -1,5 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateGenreDto {
   @IsNotEmpty()
@@ -12,7 +13,9 @@ export class CreateGenreDto {
 }
 
 export class GenreRelationDto {
-  @IsNotEmpty()
+  // @IsNotEmpty()
+  @IsOptional()
+  @Transform(({ value }) => (value ? parseInt(value) : value))
   @IsNumber()
   id: number;
 

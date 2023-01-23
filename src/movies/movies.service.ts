@@ -17,7 +17,7 @@ export class MoviesService {
     return this.prismaService.movie.create({
       data: {
         ...data,
-        // genres: { connect: [...genres] },
+        genres: { connect: [...genres] },
         user: { connect: { email: user.email } },
       },
     });
@@ -31,7 +31,7 @@ export class MoviesService {
       this.prismaService.movie.findMany({
         skip,
         take: +limit,
-        include: { genres: true },
+        include: { genres: true,},
       }),
     ]);
 
