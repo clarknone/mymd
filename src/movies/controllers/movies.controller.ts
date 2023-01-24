@@ -13,6 +13,7 @@ import {
   UseFilters,
   UseInterceptors,
   UploadedFile,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { MoviesService } from '../movies.service';
 import { CreateMovieDto } from '../dto/movie/create-movie.dto';
@@ -20,12 +21,11 @@ import { UpdateMovieDto } from '../dto/movie/update-movie.dto';
 import { GetAuthUser } from 'src/helper/auth/user.decorator';
 import { AuthUser } from 'src/auth/entities/auth.entity';
 import { JwtGuard } from 'src/helper/auth/user.guard';
-import { PrimsaErrorExceptionFitler } from 'src/helper/exceptions/filters/prisma.knownRequest';
 import { QueryParamDTO } from 'src/helper/dto/queryparams.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { MovieEntityResponse } from '../entities/movie.entity';
 
-@UseFilters(PrimsaErrorExceptionFitler)
 @Controller()
 export class MoviesController {
   constructor(
@@ -53,13 +53,15 @@ export class MoviesController {
     return this.moviesService.findAll(params);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const movie = await this.moviesService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<MovieEntityResponse> {
+    let movie = await this.moviesService.findOne(+id);
     if (!movie) {
       throw new NotFoundException('Invalid ID, Movie not found');
     }
-    return movie;
+    const response = new MovieEntityResponse({ ...movie });
+    return response;
   }
 
   @UseGuards(JwtGuard)
