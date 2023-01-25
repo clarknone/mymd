@@ -4,9 +4,7 @@ export class MovieEntityResponse {
   id: number;
   title: string;
   text: string;
-  overview: string;
-  @Exclude()
-  image: string;
+  ratings: string;
 
   constructor(partial: Partial<MovieEntityResponse>) {
     Object.assign(this, partial);
